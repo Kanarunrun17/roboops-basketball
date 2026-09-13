@@ -1,0 +1,48 @@
+name: RoboOps CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-train-evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Dockerの自動ビルド
+        run: docker compose build
+
+      - name: 1. Ruff — code quality
+        run: docker compose run --rm workshop ruff check .
+
+      - name: Download a tiny LeRobot dataset subset
+        run: docker compose run --rm workshop python src/download_dataset.py --max-episodes 20
+
+      - name: 2. Pytest — code, Notebook, and data contracts
+        run: docker compose run --rm workshop pytest -q
+
+      - name: 3. Dataset validation
+        run: docker compose run --rm workshop python src/validate_dataset.py
+
+      - name: 4. ACTの学習経路確認
+        run: docker compose run --rm workshop python src/train.py --config configs/train_ci.yaml
+
+      - name: 5. PushTの自動評価
+        run: docker compose run --rm workshop python src/eval.py --config configs/eval_ci.yaml
+
+      - name: Keep CI evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: roboops-ci-evidence
+          path: |
+            artifacts/checkpoints/lerobot-act-ci/training_metrics.json
+            artifacts/evaluation/metrics-ci.json
+          if-no-files-found: warn

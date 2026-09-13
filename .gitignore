@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.venv/
+.uv-cache/
+.ruff_cache/
+.pytest_cache/
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+
+# Downloaded datasets and generated artifacts are managed outside Git.
+data/
+artifacts/
