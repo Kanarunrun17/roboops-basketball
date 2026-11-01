@@ -37,6 +37,18 @@ jobs:
       - name: 5. PushTの自動評価
         run: docker compose run --rm workshop python src/eval.py --config configs/eval_ci.yaml
 
+      - name: 6. バスケットボール Dataset生成 (人間デモ + 人間らしい合成デモ)
+        run: docker compose run --rm workshop python src/generate_basketball.py --episodes 30
+
+      - name: 7. バスケットボール Dataset validation
+        run: docker compose run --rm workshop python src/validate_basketball.py --min-human 2
+
+      - name: 8. バスケットボール ACTの学習経路確認
+        run: docker compose run --rm workshop python src/train.py --config configs/train_basketball_ci.yaml
+
+      - name: 9. バスケットボールの自動評価
+        run: docker compose run --rm workshop python src/eval_basketball.py --config configs/eval_basketball_ci.yaml
+
       - name: Keep CI evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -45,4 +57,7 @@ jobs:
           path: |
             artifacts/checkpoints/lerobot-act-ci/training_metrics.json
             artifacts/evaluation/metrics-ci.json
+            artifacts/dataset/basketball.json
+            artifacts/checkpoints/basketball-act-ci/training_metrics.json
+            artifacts/evaluation/metrics-basketball-ci.json
           if-no-files-found: warn

@@ -40,7 +40,10 @@ def _row_count(value: np.ndarray) -> int:
     return int(value.shape[0]) if value.ndim > 0 else 0
 
 
-def validate(values: dict[str, np.ndarray]) -> list[Check]:
+def validate(
+    values: dict[str, np.ndarray],
+    expected_shapes: dict[str, tuple[int, ...]] = EXPECTED_SHAPES,
+) -> list[Check]:
     missing = [key for key in REQUIRED_KEYS if key not in values]
     checks = [
         Check(
@@ -77,7 +80,7 @@ def validate(values: dict[str, np.ndarray]) -> list[Check]:
 
     shapes_ok = all(
         required[key].ndim == 2 and required[key].shape[1:] == expected
-        for key, expected in EXPECTED_SHAPES.items()
+        for key, expected in expected_shapes.items()
     ) and required[EPISODE_KEY].ndim == 1
     shape_detail = ", ".join(f"{key}={required[key].shape}" for key in REQUIRED_KEYS)
     checks.append(Check("state / action shapes match schema", shapes_ok, shape_detail))

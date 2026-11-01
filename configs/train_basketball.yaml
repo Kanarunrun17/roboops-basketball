@@ -1,0 +1,32 @@
+# バスケットボールtask: 人間デモ + 人間らしい合成デモでLeRobot公式ACTを学習します。
+dataset:
+  path: data/processed/basketball.npz
+
+model:
+  state_dim: 4
+  environment_dim: 6
+  action_dim: 3
+  chunk_size: 16
+  dim_model: 64
+  n_heads: 4
+  dim_feedforward: 256
+  n_encoder_layers: 2
+  n_decoder_layers: 1
+  use_vae: false
+  # リリースのタイミングがぼやけないよう、temporal ensembleを使わず毎step予測します。
+  temporal_ensemble_coeff: null
+  dropout: 0.1
+
+training:
+  epochs: 30
+  batch_size: 128
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  validation_ratio: 0.2
+  seed: 42
+  max_steps: 100000
+  torch_threads: 8
+
+output:
+  checkpoint: artifacts/checkpoints/basketball-act
+  metrics: artifacts/checkpoints/basketball-act/training_metrics.json

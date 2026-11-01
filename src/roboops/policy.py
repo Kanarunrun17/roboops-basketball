@@ -10,13 +10,16 @@ from lerobot.policies.act.modeling_act import ACTPolicy
 
 
 def build_act_policy(model_config: dict[str, Any]) -> ACTPolicy:
-    """LeRobot公式ACTをCI向けのstate-only構成で作ります。"""
+    """LeRobot公式ACTをCI向けのstate-only構成で作ります。次元の既定値はPushTです。"""
+    state_dim = int(model_config.get("state_dim", 2))
+    environment_dim = int(model_config.get("environment_dim", 16))
+    action_dim = int(model_config.get("action_dim", 2))
     config = ACTConfig(
         input_features={
-            "observation.state": PolicyFeature(FeatureType.STATE, (2,)),
-            "observation.environment_state": PolicyFeature(FeatureType.ENV, (16,)),
+            "observation.state": PolicyFeature(FeatureType.STATE, (state_dim,)),
+            "observation.environment_state": PolicyFeature(FeatureType.ENV, (environment_dim,)),
         },
-        output_features={"action": PolicyFeature(FeatureType.ACTION, (2,))},
+        output_features={"action": PolicyFeature(FeatureType.ACTION, (action_dim,))},
         chunk_size=int(model_config["chunk_size"]),
         n_action_steps=1,
         pre_norm=True,
@@ -26,7 +29,11 @@ def build_act_policy(model_config: dict[str, Any]) -> ACTPolicy:
         n_encoder_layers=int(model_config["n_encoder_layers"]),
         n_decoder_layers=int(model_config["n_decoder_layers"]),
         use_vae=bool(model_config["use_vae"]),
-        temporal_ensemble_coeff=float(model_config["temporal_ensemble_coeff"]),
+        temporal_ensemble_coeff=(
+            None
+            if model_config["temporal_ensemble_coeff"] is None
+            else float(model_config["temporal_ensemble_coeff"])
+        ),
         dropout=float(model_config["dropout"]),
         device="cpu",
     )

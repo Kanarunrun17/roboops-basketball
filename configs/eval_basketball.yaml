@@ -1,0 +1,14 @@
+# 固定した20 seedでシュートさせ、成功率を記録します。
+evaluation:
+  checkpoint: artifacts/checkpoints/basketball-act
+  episodes: 20
+  max_steps: 150
+  seed: 1000
+  headless: true
+  save_video: true
+  video_path: artifacts/evaluation/rollout-basketball-act.mp4
+  video_episodes: 6
+  min_success_rate: 0.3
+
+output:
+  metrics: artifacts/evaluation/metrics-basketball-act.json

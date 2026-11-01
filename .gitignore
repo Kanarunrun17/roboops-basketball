@@ -9,5 +9,6 @@ __pycache__/
 *.py[cod]
 
 # Downloaded datasets and generated artifacts are managed outside Git.
-data/
+data/*
+!data/human/
 artifacts/

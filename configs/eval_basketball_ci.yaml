@@ -1,0 +1,14 @@
+# GitHub Actions用: 短いheadless rolloutで評価経路を確認します(成功率の閾値は課さない)。
+evaluation:
+  checkpoint: artifacts/checkpoints/basketball-act-ci
+  episodes: 3
+  max_steps: 150
+  seed: 1000
+  headless: true
+  save_video: false
+  video_path: artifacts/evaluation/rollout-basketball-ci.mp4
+  video_episodes: 1
+  min_success_rate: 0.0
+
+output:
+  metrics: artifacts/evaluation/metrics-basketball-ci.json
